@@ -17,7 +17,11 @@ function Login() {
             const response = await axios.post("http://localhost:9005/api/v1/users/login", {
                 email,
                 password
-            })
+            },
+            {
+                withCredentials: true // include cookies
+            }
+            )
             // console.log(response)
             if(response.data.statusCode===200){
                 navigate("/")
@@ -41,7 +45,7 @@ function Login() {
                             <TextField
                                 type="text"
                                 required
-                                id="filled-required"
+                                id="filled-required-email"
                                 label="email"
                                 variant="filled"
                                 fullWidth
@@ -52,7 +56,7 @@ function Login() {
                             <TextField
                                 type="password"
                                 required
-                                id="filled-required"
+                                id="filled-required-password"
                                 label="password"
                                 variant="filled"
                                 fullWidth

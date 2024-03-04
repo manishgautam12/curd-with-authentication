@@ -7,7 +7,13 @@ import todoRouter from './routes/todo.routes.js'
 
 
 const app=express();
-app.use(cors());
+// app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:3000', // Update with your frontend URL
+    credentials: true,
+}));
+
+
 dotenv.config({
     path: './.env'
 });

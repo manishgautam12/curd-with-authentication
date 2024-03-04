@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -10,6 +10,7 @@ import Paper from '@mui/material/Paper';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -23,17 +24,39 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 }));
 
 export default function CustomizedTables() {
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get("http://localhost:9005/api/v1/todo/fetchAllTodo")
-        console.log(response)
-      } catch (error) {
+  const [data, setData] = useState([])
 
-      }
-    }
+  useEffect(()=>{
     fetchData()
-  }, [])
+  },[])
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get("http://localhost:9005/api/v1/todo/fetchAllTodo", {
+        withCredentials: true,
+      })
+      // console.log(response.data)
+      setData(response.data.data.todo)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const handleDelete = async (todoId) => {
+    try {
+        const response = await axios.delete(
+            `http://localhost:9005/api/v1/todo/deleteTodo/${todoId}`, 
+            {
+                withCredentials: true,
+            }
+        );
+        console.log(response);
+        fetchData();
+    } catch (error) {
+        console.error(error);
+    }
+};
+
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 700 }} aria-label="customized table">
@@ -46,13 +69,19 @@ export default function CustomizedTables() {
           </TableRow>
         </TableHead>
         <TableBody>
-          <StyledTableCell>1</StyledTableCell>
-          <StyledTableCell align="right">manish</StyledTableCell>
-          <StyledTableCell align="right">this is test</StyledTableCell>
-          <StyledTableCell align="right">
-            <EditIcon />
-            <DeleteIcon />
-          </StyledTableCell>
+          {data.map((row, index) => (
+            <TableRow key={index}>
+              <StyledTableCell>{index + 1}</StyledTableCell>
+              <StyledTableCell align="right">{row.title}</StyledTableCell>
+              <StyledTableCell align="right">{row.description}</StyledTableCell>
+              <StyledTableCell align="right">
+              <Link to={`/update/${row._id}`}>
+                  <EditIcon />
+                </Link>
+                <DeleteIcon onClick={() => handleDelete(row._id)} />
+              </StyledTableCell>
+            </TableRow>
+          ))}
         </TableBody>
       </Table>
     </TableContainer>
