@@ -1,11 +1,13 @@
 import { Button, Grid, Paper, TextField } from "@mui/material";
 import axios from "axios";
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 function AddTodo() {
     const formStyle = { display: "flex", margin: "20px", padding: "10px", height: "10vh", justifyContent: "space-between" }
 
     const [title, setTitle] = useState("")
     const [description, setDescription] = useState("")
+    const navigate=useNavigate();
     console.log(title, description)
 
     const handleSubmit = async (e) => {
@@ -24,6 +26,21 @@ function AddTodo() {
             console.log(error)
         }
     }
+    const handleLogout = async () => {
+        try {
+            const userConfirmed = window.confirm("Are you sure you want to logout?");
+            if (userConfirmed) {
+                const response = await axios.post("http://localhost:9005/api/v1/users/logout", null, {
+                    withCredentials: true,
+                });
+                if (response.data.statusCode === 200) {
+                    navigate("/login");
+                }
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
     return (
         <Grid>
             <Paper align="center">
@@ -50,6 +67,12 @@ function AddTodo() {
                     </Grid>
                     <Grid>
                         <Button type="submit" variant="contained">Add Note</Button>
+                    </Grid>
+                    <Grid>
+                        <Button
+                        variant="contained"
+                        onClick={handleLogout}
+                        >Logout</Button>
                     </Grid>
                 </form>
             </Paper>
