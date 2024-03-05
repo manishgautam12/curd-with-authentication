@@ -2,8 +2,11 @@ import { Button, Grid, Paper, TextField } from "@mui/material";
 import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-function AddTodo(props) {
+import useTodo from "../contexts/todo";
+function AddTodo() {
     const formStyle = { display: "flex", margin: "20px", padding: "10px", height: "10vh", justifyContent: "space-between" }
+     
+    const {setapiStatusTrue}=useTodo();
 
     const [title, setTitle] = useState("")
     const [description, setDescription] = useState("")
@@ -24,7 +27,7 @@ function AddTodo(props) {
             )
             console.log(response)
             setShowForm(false);
-            props.changeUpdateData(true)
+            setapiStatusTrue()
         } catch (error) {
             console.log(error)
         }

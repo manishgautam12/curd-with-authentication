@@ -11,6 +11,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import useTodo from '../contexts/todo';
 
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -23,43 +24,44 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   },
 }));
 
-export default function CustomizedTables(props) {
+export default function CustomizedTables() {
+  const { apiStatus, setapiStatusTrue, setapiStatusFalse } = useTodo();
   const [data, setData] = useState([])
 
-  useEffect(()=>{
-    if(props.updateData){
-      fetchData()
-    }
-    
-  },[props.updateData])
+  useEffect(() => {
 
-  const fetchData = async () => {
-    try {
-      const response = await axios.get("http://localhost:9005/api/v1/todo/fetchAllTodo", {
-        withCredentials: true,
-      })
-      // console.log(response.data)
-      setData(response.data.data.todo)
-      props.changeUpdateData(false)
-    } catch (error) {
-      console.log(error)
+    const fetchData = async () => {
+      try {
+        const response = await axios.get("http://localhost:9005/api/v1/todo/fetchAllTodo", {
+          withCredentials: true,
+        })
+        // console.log(response.data)
+        setData(response.data.data.todo)
+
+      } catch (error) {
+        console.log(error)
+      }
     }
-  }
+    fetchData()
+    setapiStatusFalse()
+  }, [apiStatus, setapiStatusFalse])
+
+
 
   const handleDelete = async (todoId) => {
     try {
-        const response = await axios.delete(
-            `http://localhost:9005/api/v1/todo/deleteTodo/${todoId}`, 
-            {
-                withCredentials: true,
-            }
-        );
-        console.log(response);
-        fetchData();
+      const response = await axios.delete(
+        `http://localhost:9005/api/v1/todo/deleteTodo/${todoId}`,
+        {
+          withCredentials: true,
+        }
+      );
+      console.log(response);
+      setapiStatusTrue()
     } catch (error) {
-        console.error(error);
+      console.error(error);
     }
-};
+  };
 
   return (
     <TableContainer component={Paper}>
@@ -79,7 +81,7 @@ export default function CustomizedTables(props) {
               <StyledTableCell align="right">{row.title}</StyledTableCell>
               <StyledTableCell align="right">{row.description}</StyledTableCell>
               <StyledTableCell align="right">
-              <Link to={`/update/${row._id}`}>
+                <Link to={`/update/${row._id}`}>
                   <EditIcon />
                 </Link>
                 <DeleteIcon onClick={() => handleDelete(row._id)} />
