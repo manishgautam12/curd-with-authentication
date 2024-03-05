@@ -23,12 +23,15 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   },
 }));
 
-export default function CustomizedTables() {
+export default function CustomizedTables(props) {
   const [data, setData] = useState([])
 
   useEffect(()=>{
-    fetchData()
-  },[])
+    if(props.updateData){
+      fetchData()
+    }
+    
+  },[props.updateData])
 
   const fetchData = async () => {
     try {
@@ -37,6 +40,7 @@ export default function CustomizedTables() {
       })
       // console.log(response.data)
       setData(response.data.data.todo)
+      props.changeUpdateData(false)
     } catch (error) {
       console.log(error)
     }

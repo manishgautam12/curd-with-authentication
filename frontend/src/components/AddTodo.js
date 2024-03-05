@@ -2,12 +2,13 @@ import { Button, Grid, Paper, TextField } from "@mui/material";
 import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-function AddTodo() {
+function AddTodo(props) {
     const formStyle = { display: "flex", margin: "20px", padding: "10px", height: "10vh", justifyContent: "space-between" }
 
     const [title, setTitle] = useState("")
     const [description, setDescription] = useState("")
-    const navigate=useNavigate();
+    const navigate = useNavigate();
+    const [showForm,setShowForm]=useState(false);
     console.log(title, description)
 
     const handleSubmit = async (e) => {
@@ -22,6 +23,8 @@ function AddTodo() {
                 }
             )
             console.log(response)
+            setShowForm(false);
+            props.changeUpdateData(true)
         } catch (error) {
             console.log(error)
         }
@@ -42,41 +45,48 @@ function AddTodo() {
         }
     };
     return (
-        <Grid>
-            <Paper align="center">
-                <form onSubmit={handleSubmit} style={formStyle}>
-                    <Grid>
-                        <TextField
-                            required
-                            id="filled-required-title"
-                            placeholder="Enter title"
-                            variant="filled"
-                            value={title}
-                            onChange={(e) => { setTitle(e.target.value) }}
-                        />
-                    </Grid>
-                    <Grid>
-                        <TextField
-                            required
-                            id="filled-required-description"
-                            placeholder="Enter description"
-                            variant="filled"
-                            value={description}
-                            onChange={(e) => { setDescription(e.target.value) }}
-                        />
-                    </Grid>
-                    <Grid>
-                        <Button type="submit" variant="contained">Add Note</Button>
-                    </Grid>
-                    <Grid>
-                        <Button
-                        variant="contained"
-                        onClick={handleLogout}
-                        >Logout</Button>
-                    </Grid>
-                </form>
-            </Paper>
-        </Grid>
+        <>
+           {showForm && <Grid>
+                <Paper align="center">
+                    <form onSubmit={handleSubmit} style={formStyle}>
+                        <Grid>
+                            <TextField
+                                required
+                                id="filled-required-title"
+                                placeholder="Enter title"
+                                variant="filled"
+                                value={title}
+                                onChange={(e) => { setTitle(e.target.value) }}
+                            />
+                        </Grid>
+                        <Grid>
+                            <TextField
+                                required
+                                id="filled-required-description"
+                                placeholder="Enter description"
+                                variant="filled"
+                                value={description}
+                                onChange={(e) => { setDescription(e.target.value) }}
+                            />
+                        </Grid>
+                        <Grid>
+                            <Button type="submit" variant="contained">Add Note</Button>
+                        </Grid>
+
+                    </form>
+                </Paper>
+            </Grid>}
+            <Grid>
+                {!showForm && <Button
+                onClick={() => setShowForm(!showForm)}
+                    variant="contained"
+                >Add New Note</Button>}
+                <Button
+                    variant="contained"
+                    onClick={handleLogout}
+                >Logout</Button>
+            </Grid>
+        </>
     )
 }
 export default AddTodo
